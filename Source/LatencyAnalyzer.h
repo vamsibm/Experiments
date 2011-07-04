@@ -19,25 +19,26 @@ private:
 	const int bufferLength;
 	AudioDeviceManager audioDeviceManager;
 
+    float inRms;
 
 public:
 	LatencyAnalyzer() : sampleRate (44100), bufferLength (960)
 
 	{
         
-        setSize(500, 400);
+        setSize(800, 600);
         
         recording = false;
 
 		// setup toggle-button
-		toggleButton = new TextButton (T("Toggle Start"));
+		toggleButton = new TextButton (T("Start Recording"));
 		toggleButton->setBounds ( 100, 200, 100, 30);
 		toggleButton->addListener (this);
 		addAndMakeVisible (toggleButton);
 
         // setup audio config button
 		aConfigButton = new TextButton (T("Audio Config Button"));
-		aConfigButton->setBounds (600, 200, 100, 30);
+		aConfigButton->setBounds (300, 200, 100, 30);
 		aConfigButton->addListener (this);
 		addAndMakeVisible (aConfigButton);
 
@@ -76,6 +77,8 @@ public:
 	void audioDeviceStopped();
 	void timerCallback();
 	void showAudioConfigDialog();
+   
+    void paint(Graphics &g);
 
 };
 

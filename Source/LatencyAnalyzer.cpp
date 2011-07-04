@@ -1,9 +1,18 @@
 #include "LatencyAnalyzer.h"
+#include <math.h>
 
 void LatencyAnalyzer::audioDeviceIOCallback(const float **inputChannelData, int numInputChannels, float **outputChannelData, int numOutputChannels, 
 											int numSamples)
 {
+    inRms = 0.f;
+    for (int i=0; i<numSamples; i++)
+        inRms += powf(inputChannelData[0][i],2.f);
+    inRms /= (float)numSamples;
+    inRms = powf(inRms,0.5f);
 
+    for (int i=0; i<numOutputChannels; i++) {
+        zeromem(outputChannelData[i], sizeof(float)*numSamples);
+    }
 	
 
 }
@@ -14,10 +23,14 @@ void LatencyAnalyzer::buttonClicked (Button* button) {
 	if(button == toggleButton) {					// start recording
 		
         recording = !recording;
-        if(recording)
+        if(recording) {
             audioDeviceManager.addAudioCallback(this);
-        else
+            toggleButton->setButtonText("Stop recording");
+        }
+        else {
             audioDeviceManager.removeAudioCallback(this);
+            toggleButton->setButtonText("Start recording");
+        }
         
 	}
 
@@ -39,6 +52,15 @@ void LatencyAnalyzer::audioDeviceStopped() {
 
 void LatencyAnalyzer::timerCallback() {
 
+    repaint();
+    
+}
+
+void LatencyAnalyzer::paint(Graphics &g) {
+    
+    float w = 100 * inRms;
+    //g.setColour(Colour::getGreen());
+    g.fillEllipse((float)getWidth()/2, (float)getHeight()/2, w, w);
 
 }
 
